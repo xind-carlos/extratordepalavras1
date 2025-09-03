@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="pt-BT">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Extrator de Palavras-Chave</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background: linear-gradient(145deg, #2f2f2f, #4e4e4e);
+            display: flex;
+            justify-content: center;
+            align-items: flex-start;
+            min-height: 100vh;
+            padding: 30px;
+            overflow: hidden;
+        }
+
+        .content {
+            width: 100%;
+            max-width: 900px;
+            z-index: 2;
+            position: relative;
+            margin-top: 20px;
+        }
+
+        h1 {
+            text-align: center;
+            font-size: 2.5rem;
+            color: #fff;
+            margin-bottom: 25px;
+            text-transform: uppercase;
+            text-shadow: 2px 2px 6px rgba(0, 0, 0, 0.2);
+        }
+
+        .resumo {
+            background-color: rgba(255, 255, 255, 0.9);
+            padding: 30px;
+            margin-bottom: 30px;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+        }
+
+        .resumo h2 {
+            color: #333;
+            font-size: 1.8rem;
+            margin-bottom: 10px;
+        }
+
+        .resumo p {
+            color: #555;
+            font-size: 1.1rem;
+            line-height: 1.7;
+        }
+
+        .resumo ul {
+            list-style: none;
+            padding-left: 20px;
+            margin-top: 20px;
+        }
+
+        .resumo ul li {
+            margin-bottom: 10px;
+            font-size: 1rem;
+            color: #666;
+        }
+
+        .container {
+            background-color: #000; /* Alterado para preto */
+            border-radius: 15px;
+            padding: 40px;
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+            text-align: center;
+            animation: fadeIn 1s ease-in-out;
+        }
+
+        @keyframes fadeIn {
+            0% {
+                opacity: 0;
+                transform: translateY(50px);
+            }
+
+            100% {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        textarea {
+            width: 100%;
+            height: 180px;
+            padding: 15px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            font-size: 1rem;
+            color: #fff; /* Texto claro */
+            background-color: #333; /* Fundo escuro */
+            margin-bottom: 20px;
+            outline: none;
+            resize: none;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+            transition: border 0.3s ease;
+        }
+
+        textarea:focus {
+            border-color: #666;
+        }
+
+        button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            padding: 12px 25px;
+            font-size: 1.2rem;
+            cursor: pointer;
+            width: 100%;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+            margin-bottom: 25px;
+        }
+
+        button:hover {
+            background-color: #45a049;
+            transform: scale(1.05);
+        }
+
+        button:active {
+            transform: scale(1.02);
+        }
+
+        #resultado-palavrachave {
+            margin-top: 20px;
+            background-color: #333; /* Fundo escuro para o resultado */
+            padding: 20px;
+            border-radius: 10px;
+            border: 2px solid #ddd;
+            color: #fff; /* Texto claro */
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            min-height: 50px;
+            box-shadow: inset 0 2px 10px rgba(0, 0, 0, 0.05);
+            opacity: 0;
+            transition: opacity 0.3s ease;
+        }
+
+        .avaliacao {
+            margin-top: 30px;
+            text-align: center;
+            display: none; /* Inicialmente oculta */
+        }
+
+        .avaliacao h3 {
+            font-size: 1.6rem;
+            margin-bottom: 15px;
+            color: #fff;
+        }
+
+        .estrelas {
+            display: flex;
+            justify-content: center;
+            gap: 5px;
+            margin-bottom: 20px;
+        }
+
+        .estrela {
+            font-size: 2rem;
+            color: #ccc;
+            cursor: pointer;
+            transition: color 0.2s ease;
+        }
+
+        .estrela:hover,
+        .estrela.active {
+            color: #FFD700;
+        }
+
+        .comentario {
+            width: 100%;
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            color: #555;
+            background-color: #f9f9f9;
+            resize: none;
+            box-shadow: inset 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 50px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        footer strong {
+            color: #333;
+        }
+
+        footer p {
+            margin: 10px 0;
+        }
+
+        /* Estilos para as palavras-chave extraídas */
+        #resultado-palavrachave span {
+            font-weight: bold;
+            color: #2C3E50;
+            background-color: #ECF0F1;
+            border-radius: 5px;
+            padding: 5px 10px;
+            margin: 5px;
+            display: inline-block;
+            font-size: 1.1rem;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, background-color 0.3s ease;
+        }
+
+        #resultado-palavrachave span:hover {
+            transform: scale(1.1);
+            background-color: #3498DB;
+            color: white;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="content">
+        <!-- Resumo -->
+        <div class="resumo">
+            <h2>O que é o Extrator de Palavras-Chave?</h2>
+            <p>
+                O Extrator de Palavras-Chave é uma ferramenta que ajuda a identificar as palavras mais relevantes em um texto. Ideal para otimização de conteúdo, SEO, e análise de textos.
+            </p>
+            <ul>
+                <li><strong>Identificação rápida:</strong> Extrai as palavras mais frequentes de qualquer texto.</li>
+                <li><strong>Facilidade de uso:</strong> Basta colar o texto e clicar em "Extrair".</li>
+                <li><strong>Aplicações práticas:</strong> Útil para pesquisa de palavras-chave e SEO.</li>
+            </ul>
+        </div>
+
+        <!-- Ferramenta de Extrator -->
+        <div class="container">
+            <h1>Extrator de Palavras-Chave</h1>
+            <textarea id="entrada-de-texto" placeholder="Cole seu texto aqui..."></textarea>
+            <button id="botao-palavrachave">Extrair Palavras-Chave</button>
+            <div id="resultado-palavrachave">Palavras-chave extraídas aparecerão aqui.</div>
+        </div>
+
+        <!-- Avaliação (inicialmente escondida) -->
+        <div class="avaliacao">
+            <h3>Como você avaliaria a ferramenta?</h3>
+            <div class="estrelas">
+                <span class="estrela" data-value="1">★</span>
+                <span class="estrela" data-value="2">★</span>
+                <span class="estrela" data-value="3">★</span>
+                <span class="estrela" data-value="4">★</span>
+                <span class="estrela" data-value="5">★</span>
+            </div>
+            <textarea class="comentario" placeholder="Deixe seu comentário..."></textarea>
+        </div>
+
+        <footer>
+            <p>&copy; 2025 Desenvolvido por <strong>Carlos</strong>. Todos os direitos reservados.</p>
+        </footer>
+    </div>
+
+    <script>
+        // Função do Extrator de Palavras-Chave
+        document.getElementById("botao-palavrachave").addEventListener("click", function () {
+            const texto = document.getElementById("entrada-de-texto").value;
+            const resultado = extrairPalavrasChave(texto);
+            const resultadoDiv = document.getElementById("resultado-palavrachave");
+            resultadoDiv.innerHTML = "Palavras-chave extraídas: ";
+            resultado.forEach(function (palavra) {
+                const span = document.createElement("span");
+                span.textContent = palavra;
+                resultadoDiv.appendChild(span);
+            });
+            resultadoDiv.style.opacity = 1;
+
+            // Mostrar a seção de avaliação após o uso
+            document.querySelector(".avaliacao").style.display = "block";
+        });
+
+        // Função para extrair as palavras-chave
+        function extrairPalavrasChave(texto) {
+            const palavras = texto
+                .toLowerCase()
+                .replace(/[^\w\s]/g, "")
+                .split(/\s+/)
+                .filter(palavra => palavra.length > 3);
+
+            const contagem = {};
+            palavras.forEach(palavra => {
+                contagem[palavra] = (contagem[palavra] || 0) + 1;
+            });
+
+            const palavrasOrdenadas = Object.entries(contagem)
+                .sort((a, b) => b[1] - a[1])
+                .slice(0, 10);
+
+            return palavrasOrdenadas.map(item => item[0]);
+        }
+
+        // Avaliação de Estrelas
+        const estrelas = document.querySelectorAll(".estrela");
+        estrelas.forEach(estrela => {
+            estrela.addEventListener("click", function () {
+                const valor = parseInt(this.getAttribute("data-value"));
+                estrelas.forEach(s => {
+                    s.classList.remove("active");
+                });
+                for (let i = 0; i < valor; i++) {
+                    estrelas[i].classList.add("active");
+                }
+            });
+        });
+    </script>
+</body>
+
+</html>
